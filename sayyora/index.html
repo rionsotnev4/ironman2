@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0B0508">
+<meta name="robots" content="noindex">
+<title>Sayyora — в кино?</title>
+<meta property="og:title" content="Sayyora, у меня к тебе дело 🎬">
+<meta property="og:description" content="Открой. Это займёт 40 секунд.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎟️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   S A Y Y O R A   —   cinema invite
+   ========================================================================== */
+:root{
+  --bg:#0B0508;
+  --bg2:#1A0A12;
+  --pink:#FF2E63;
+  --pink-soft:rgba(255,46,99,.30);
+  --pink-faint:rgba(255,46,99,.10);
+  --gold:#FFC44B;
+  --ink:#FFECF2;
+  --dim:rgba(255,236,242,.55);
+  --ui:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  --disp:'Oswald',var(--ui);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg)}
+body{
+  font-family:var(--ui);color:var(--ink);
+  min-height:100vh;min-height:100dvh;
+  overflow:hidden;overscroll-behavior:none;touch-action:manipulation;
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(255,46,99,.20), transparent 60%),
+    radial-gradient(90% 60% at 50% 110%, rgba(255,196,75,.10), transparent 60%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 55%);
+}
+
+/* ---------- curtain + grain ---------- */
+#curtain{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.30;
+  background:repeating-linear-gradient(90deg,
+    rgba(255,46,99,.13) 0 10px,
+    rgba(0,0,0,.30) 10px 26px,
+    rgba(255,46,99,.05) 26px 38px);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 42%,transparent 62%,#000 100%);
+          mask-image:linear-gradient(180deg,#000 0%,transparent 42%,transparent 62%,#000 100%);
+}
+#grain{
+  position:fixed;inset:-50%;z-index:1;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 900ms steps(3) infinite;
+}
+@keyframes grain{
+  0%{transform:translate(0,0)} 33%{transform:translate(-3%,2%)} 66%{transform:translate(2%,-3%)} 100%{transform:translate(0,0)}
+}
+#vig{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 45%,transparent 45%,rgba(0,0,0,.72) 100%)}
+
+/* ---------- stage / screens ---------- */
+#stage{position:relative;z-index:10;min-height:100dvh}
+.scr{
+  position:fixed;inset:0;display:none;
+  padding:calc(env(safe-area-inset-top) + 56px) 16px calc(env(safe-area-inset-bottom) + 28px);
+  text-align:center;overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.scr.on{display:block;animation:in .5s cubic-bezier(.2,.8,.25,1) both}
+@keyframes in{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+.wrap{
+  width:100%;max-width:440px;margin:0 auto;min-height:100%;
+  display:flex;flex-direction:column;justify-content:center;
+}
+
+/* ---------- type ---------- */
+.kicker{
+  font-family:var(--disp);font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--pink);opacity:.85;margin:0 0 14px;font-weight:600;
+}
+h1,h2{
+  font-family:var(--disp);font-weight:700;margin:0;line-height:.94;
+  letter-spacing:.005em;text-transform:uppercase;
+}
+h1{font-size:clamp(34px,11.5vw,58px)}
+h2{font-size:clamp(26px,8.6vw,42px)}
+.glow{
+  color:var(--ink);
+  text-shadow:0 0 14px rgba(255,46,99,.55),0 0 42px rgba(255,46,99,.28);
+}
+.gold{color:var(--gold);text-shadow:0 0 14px rgba(255,196,75,.45)}
+.sub{font-size:15px;line-height:1.55;color:var(--dim);margin:16px auto 0;max-width:34ch}
+.tiny{font-size:12.5px;color:var(--dim);line-height:1.5}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:.14em;text-transform:uppercase;
+  padding:17px 30px;border-radius:999px;border:0;cursor:pointer;
+  text-decoration:none;transition:transform .22s cubic-bezier(.2,.8,.25,1),box-shadow .22s,opacity .3s;
+  will-change:transform;
+}
+.btn:active{transform:scale(.96)}
+.btn-yes{
+  background:linear-gradient(135deg,#FF4D78,#FF2E63 55%,#D91E4E);
+  color:#fff;box-shadow:0 10px 34px rgba(255,46,99,.45),inset 0 1px 0 rgba(255,255,255,.28);
+}
+.btn-gold{
+  background:linear-gradient(135deg,#FFD782,#FFC44B 55%,#E8A21F);
+  color:#2A1400;box-shadow:0 10px 34px rgba(255,196,75,.38),inset 0 1px 0 rgba(255,255,255,.4);
+}
+.btn-no{
+  background:rgba(255,236,242,.07);color:var(--dim);
+  border:1px solid rgba(255,236,242,.18);
+  font-size:16px;padding:15px 26px;
+}
+.btn-no.fixed{position:fixed;z-index:60;margin:0;transition:left .22s cubic-bezier(.2,.9,.3,1.2),top .22s cubic-bezier(.2,.9,.3,1.2),opacity .5s,transform .5s}
+.btn-no.gone{opacity:0;transform:scale(.4) rotate(-14deg);pointer-events:none}
+.ghost{
+  background:none;border:0;color:var(--dim);font-family:var(--ui);font-size:14px;
+  padding:12px 16px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;
+}
+.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 10px 34px rgba(255,196,75,.34)}50%{box-shadow:0 10px 46px rgba(255,196,75,.62)}}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin-top:30px;min-height:62px}
+
+/* ---------- cards ---------- */
+.cards{display:flex;flex-direction:column;gap:11px;margin-top:26px;text-align:left}
+.card{
+  display:flex;align-items:center;gap:14px;width:100%;
+  padding:15px 16px;border-radius:16px;cursor:pointer;
+  background:linear-gradient(180deg,rgba(255,236,242,.07),rgba(255,236,242,.035));
+  border:1px solid rgba(255,236,242,.13);color:var(--ink);
+  font-family:var(--ui);font-size:16px;text-align:left;
+  transition:transform .18s,border-color .18s,background .18s,box-shadow .18s;
+}
+.card:active{transform:scale(.98)}
+.card .em{font-size:25px;line-height:1;flex:0 0 auto;width:32px;text-align:center}
+.card .nm{display:block;font-weight:600;letter-spacing:.01em}
+.card .ds{display:block;font-size:12.5px;color:var(--dim);margin-top:3px;line-height:1.35}
+.card .tick{margin-left:auto;font-size:18px;opacity:0;transition:opacity .18s;color:var(--gold)}
+.card.sel{
+  border-color:var(--gold);background:linear-gradient(180deg,rgba(255,196,75,.16),rgba(255,196,75,.06));
+  box-shadow:0 0 0 1px rgba(255,196,75,.35),0 8px 26px rgba(255,196,75,.16);
+}
+.card.sel .tick{opacity:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:26px}
+.grid2 .card{flex-direction:column;align-items:flex-start;gap:8px;padding:15px 13px}
+.grid2 .card .em{width:auto}
+.grid2 .card .tick{margin:0;position:absolute;top:10px;right:12px}
+.grid2 .card{position:relative}
+
+/* ---------- progress ---------- */
+#prog{
+  position:fixed;top:calc(env(safe-area-inset-top) + 16px);left:0;right:0;z-index:40;
+  display:none;justify-content:center;gap:7px;pointer-events:none;
+}
+#prog.on{display:flex}
+#prog i{width:22px;height:3px;border-radius:2px;background:rgba(255,236,242,.18);transition:background .3s,box-shadow .3s}
+#prog i.act{background:var(--gold);box-shadow:0 0 10px rgba(255,196,75,.7)}
+
+/* ---------- sound toggle ---------- */
+#snd{
+  position:fixed;top:calc(env(safe-area-inset-top) + 8px);right:10px;z-index:70;
+  background:none;border:0;font-size:17px;padding:10px;cursor:pointer;opacity:.5;color:var(--ink);
+}
+
+/* ---------- ticket ---------- */
+.ticket{
+  position:relative;margin:24px auto 0;padding:22px 18px 18px;border-radius:18px;text-align:left;
+  background:linear-gradient(180deg,rgba(255,236,242,.09),rgba(255,236,242,.04));
+  border:1px solid rgba(255,196,75,.34);
+  box-shadow:0 18px 50px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1);
+  overflow:hidden;
+}
+.ticket:before,.ticket:after{
+  content:'';position:absolute;width:24px;height:24px;border-radius:50%;
+  background:var(--bg);box-shadow:inset 0 0 0 1px rgba(255,196,75,.3);
+  top:50%;margin-top:-12px;
+}
+.ticket:before{left:-13px}
+.ticket:after{right:-13px}
+.trow{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+  padding:10px 2px;border-bottom:1px dashed rgba(255,236,242,.14);
+  opacity:0;transform:translateY(8px);transition:opacity .45s,transform .45s;
+}
+.trow.in{opacity:1;transform:none}
+.trow:last-child{border-bottom:0}
+.trow .k{
+  font-family:var(--disp);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--dim);flex:0 0 auto;padding-top:3px;
+}
+.trow .v{font-size:15px;font-weight:600;text-align:right;line-height:1.35}
+.trow .v.g{color:var(--gold)}
+.stamp{
+  display:inline-block;margin-top:16px;padding:7px 14px;border:2px solid var(--pink);
+  color:var(--pink);border-radius:8px;font-family:var(--disp);font-size:12px;
+  letter-spacing:.2em;text-transform:uppercase;transform:rotate(-3deg);opacity:.9;
+}
+
+/* ---------- misc fx ---------- */
+#pop{position:fixed;inset:0;z-index:55;pointer-events:none;overflow:hidden}
+.kernel{position:absolute;font-size:22px;will-change:transform;animation:fall linear forwards}
+@keyframes fall{
+  from{transform:translateY(-10vh) rotate(0deg);opacity:1}
+  to{transform:translateY(115vh) rotate(var(--r));opacity:.15}
+}
+#toast{
+  position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%) translateY(14px);
+  z-index:80;background:rgba(10,5,8,.9);border:1px solid rgba(255,236,242,.16);
+  padding:11px 18px;border-radius:999px;font-size:13.5px;color:var(--ink);
+  opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:88vw;
+}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.taunt{margin-top:18px;font-size:13.5px;color:var(--gold);min-height:20px;opacity:0;transition:opacity .3s}
+.taunt.on{opacity:.95}
+.marq{
+  display:flex;gap:7px;justify-content:center;margin-bottom:22px;
+}
+.marq i{width:7px;height:7px;border-radius:50%;background:var(--gold);opacity:.25;animation:bulb 1.4s ease-in-out infinite}
+.marq i:nth-child(2){animation-delay:.18s}
+.marq i:nth-child(3){animation-delay:.36s}
+.marq i:nth-child(4){animation-delay:.54s}
+.marq i:nth-child(5){animation-delay:.72s}
+@keyframes bulb{0%,100%{opacity:.22;box-shadow:none}50%{opacity:1;box-shadow:0 0 12px var(--gold)}}
+.poster{
+  font-size:54px;line-height:1;margin-bottom:18px;
+  filter:drop-shadow(0 8px 26px rgba(255,46,99,.5));
+  animation:float 4.5s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+.hint{margin-top:22px;font-size:12px;color:var(--dim);letter-spacing:.06em}
+.chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:14px}
+.chip{
+  font-size:12px;padding:6px 12px;border-radius:999px;
+  background:rgba(255,196,75,.12);border:1px solid rgba(255,196,75,.3);color:var(--gold);
+}
+</style>
+</head>
+<body>
+
+<div id="curtain"></div>
+<div id="grain"></div>
+<div id="vig"></div>
+<div id="pop"></div>
+<div id="toast"></div>
+
+<button id="snd" aria-label="звук">🔊</button>
+<div id="prog"><i></i><i></i><i></i><i></i></div>
+
+<main id="stage">
+
+  <!-- ==================== 0. OPEN ==================== -->
+  <section class="scr on" id="s-open">
+    <div class="wrap">
+      <div class="marq"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="poster">🎟️</div>
+      <p class="kicker">входящее приглашение</p>
+      <h1 class="glow">SAYYORA</h1>
+      <p class="sub">Тут одно дело. Займёт 40 секунд, обещаю.<br>И да, отказаться будет сложновато.</p>
+      <div class="row">
+        <button class="btn btn-gold pulse" id="openBtn">ОТКРЫТЬ →</button>
+      </div>
+      <p class="hint">лучше со звуком 🔊</p>
+    </div>
+  </section>
+
+  <!-- ==================== 1. ASK ==================== -->
+  <section class="scr" id="s-ask">
+    <div class="wrap">
+      <div class="poster">🍿</div>
+      <p class="kicker">суббота · 20:00 · большой экран</p>
+      <h1 class="glow">ПОЙДЁМ<br>В КИНО?</h1>
+      <p class="sub">«Одиссея». Три часа моря, монстров и слишком громкого звука. Места уже забронированы — осталось формальное согласие.</p>
+      <div class="chips">
+        <span class="chip">🎬 Одиссея</span>
+        <span class="chip">🗓 сб, 19.09</span>
+        <span class="chip">🕗 20:00</span>
+      </div>
+      <div class="row">
+        <button class="btn btn-yes" id="yesBtn">ДА</button>
+        <button class="btn btn-no" id="noBtn">нет</button>
+      </div>
+      <p class="taunt" id="taunt"></p>
+    </div>
+  </section>
+
+  <!-- ==================== 2. WHEN ==================== -->
+  <section class="scr" id="s-when">
+    <div class="wrap">
+      <p class="kicker">шаг 1 / 4</p>
+      <h2 class="glow">КОГДА<br>ИДЁМ?</h2>
+      <p class="sub">Выбор, конечно, огромный. Не торопись.</p>
+      <div class="cards" id="whenCards"></div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. FOOD ==================== -->
+  <section class="scr" id="s-food">
+    <div class="wrap">
+      <p class="kicker">шаг 2 / 4</p>
+      <h2 class="glow">ПОСЛЕ КИНО —<br><span class="gold">ЧТО ЕДИМ?</span></h2>
+      <p class="sub">Отметь всё, что заходит. Попкорн едой не считается.</p>
+      <div class="grid2" id="foodCards"></div>
+      <div class="row">
+        <button class="btn btn-gold" id="foodNext" disabled style="opacity:.35">ДАЛЬШЕ →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 4. SWEET ==================== -->
+  <section class="scr" id="s-sweet">
+    <div class="wrap">
+      <p class="kicker">шаг 3 / 4</p>
+      <h2 class="glow">А К ЭТОМУ<br><span class="gold">ЧТО ПОПИТЬ?</span></h2>
+      <p class="sub">Десерт — не роскошь, а часть плана.</p>
+      <div class="grid2" id="sweetCards"></div>
+    </div>
+  </section>
+
+  <!-- ==================== 5. AFTER ==================== -->
+  <section class="scr" id="s-after">
+    <div class="wrap">
+      <p class="kicker">шаг 4 / 4</p>
+      <h2 class="glow">И ЧЕМ<br>ЗАЙМЁМСЯ?</h2>
+      <p class="sub">Финальный вопрос. Дальше — билет.</p>
+      <div class="cards" id="afterCards"></div>
+    </div>
+  </section>
+
+  <!-- ==================== 6. FINAL ==================== -->
+  <section class="scr" id="s-final">
+    <div class="wrap">
+      <div class="marq"><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="kicker">подтверждено</p>
+      <h2 class="glow">У НАС<br><span class="gold">ПЛАН</span></h2>
+      <p class="tiny" style="margin-top:12px">(некоторые назвали бы это свиданием, но мы же просто в кино 😌)</p>
+
+      <div class="ticket" id="ticket">
+        <div class="trow"><span class="k">фильм</span><span class="v">«Одиссея»</span></div>
+        <div class="trow"><span class="k">когда</span><span class="v g">сб, 19.09 · 20:00</span></div>
+        <div class="trow"><span class="k">места</span><span class="v">забронированы ✓</span></div>
+        <div class="trow"><span class="k">едим</span><span class="v g" id="tFood">—</span></div>
+        <div class="trow"><span class="k">пьём</span><span class="v g" id="tSweet">—</span></div>
+        <div class="trow"><span class="k">потом</span><span class="v g" id="tAfter">—</span></div>
+        <div class="trow"><span class="k">с кем</span><span class="v">Аброр</span></div>
+      </div>
+      <div class="stamp">билет действителен</div>
+
+      <div class="row" style="flex-direction:column;gap:6px">
+        <a class="btn btn-gold pulse" id="sendBtn" href="#" target="_blank" rel="noopener">ОТПРАВИТЬ АБРОРУ →</a>
+        <button class="ghost" id="copyBtn">скопировать текст</button>
+        <button class="ghost" id="againBtn">поменять ответы</button>
+      </div>
+      <p class="hint">нажми «отправить» — откроется Telegram с готовым сообщением</p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ==========================================================================
+   CONFIG
+   ========================================================================== */
+const CFG = {
+  telegram : 'rionsotnev4',
+  from     : 'Аброр',
+  movie    : '«Одиссея»',
+  when     : 'суббота, 19.09, 20:00',
+
+  when_opts: [
+    { em:'🗓', nm:'Суббота, 19.09 — 20:00',  ds:'отличный выбор' },
+    { em:'🕗', nm:'20:00 — суббота, 19.09',  ds:'то же самое, но задом наперёд' },
+    { em:'✅', nm:'Суббота. 19.09. 20:00.',  ds:'правильный ответ (места уже забронированы)' },
+  ],
+
+  food: [
+    { em:'🍣', nm:'Суши',          ds:'тихо, красиво, палочками' },
+    { em:'🍕', nm:'Пицца',         ds:'делим пополам' },
+    { em:'🍜', nm:'Рамен',         ds:'горячо и по-киношному' },
+    { em:'🍔', nm:'Бургеры',       ds:'честно, без пафоса' },
+    { em:'🌯', nm:'Шаурма',        ds:'после 22:00 — топ' },
+    { em:'🫓', nm:'Хачапури',      ds:'сыр и последствия' },
+    { em:'🍛', nm:'Узбекская',     ds:'плов, лагман, ностальгия' },
+    { em:'🥗', nm:'Что-то лёгкое', ds:'ладно, не настаиваю' },
+  ],
+
+  sweet: [
+    { em:'🧋', nm:'Боба-чай',   ds:'обязательный пункт' },
+    { em:'🍦', nm:'Мороженое',  ds:'даже если холодно' },
+    { em:'🍰', nm:'Чизкейк',    ds:'один на двоих' },
+    { em:'☕️', nm:'Кофе',       ds:'чтобы не уснуть на титрах' },
+    { em:'🍩', nm:'Пончики',    ds:'no comments' },
+    { em:'💧', nm:'Только вода', ds:'героически, но подозрительно' },
+  ],
+
+  after: [
+    { em:'🚶', nm:'Пройтись по Пётрковской',   ds:'классика, ночью она красивая' },
+    { em:'🎳', nm:'Боулинг',                   ds:'я проиграю, ты будешь довольна' },
+    { em:'🎲', nm:'Настолки',                  ds:'до первой ссоры' },
+    { em:'🕹', nm:'Автоматы',                  ds:'потратим все монеты за 15 минут' },
+    { em:'💬', nm:'Сидеть и болтать',          ds:'до последнего трамвая' },
+    { em:'🎬', nm:'Разбирать фильм два часа',  ds:'а кто-то ведь уснёт на середине' },
+  ],
+
+  no_labels: [
+    'не-а', 'точно нет?', 'подумай ещё', 'ты уверена?',
+    'а если с попкорном?', 'ну Sayyora…', 'последний шанс', 'всё, я сдаюсь',
+  ],
+
+  taunts: [
+    'мимо 😌',
+    'кнопка застеснялась',
+    'она ушла за колой',
+    'система отказы не принимает',
+    'попытка засчитана… как «да»',
+    'Sayyora, ну прекрати 😄',
+    'ей тоже неловко',
+    'ладно, это было близко',
+  ],
+};
+
+const $  = (s)=>document.querySelector(s);
+const $$ = (s)=>[...document.querySelectorAll(s)];
+const state = { food: [], sweet: null, after: null };
+
+/* ==========================================================================
+   SOUND (WebAudio, без файлов)
+   ========================================================================== */
+let AC=null, sndOn=true;
+function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return AC; }
+function tone(f,dur,type='sine',vol=.12,slide=0){
+  if(!sndOn) return; const c=ac(); if(!c) return;
+  if(c.state==='suspended') c.resume();
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type; o.frequency.setValueAtTime(f,c.currentTime);
+  if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(40,f+slide),c.currentTime+dur);
+  g.gain.setValueAtTime(0,c.currentTime);
+  g.gain.linearRampToValueAtTime(vol,c.currentTime+.012);
+  g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dur);
+  o.connect(g).connect(c.destination); o.start(); o.stop(c.currentTime+dur+.02);
+}
+const sfx = {
+  tap  : ()=> tone(760,.07,'triangle',.10),
+  pick : ()=> { tone(540,.09,'triangle',.11); setTimeout(()=>tone(860,.12,'triangle',.09),60); },
+  flee : ()=> tone(360,.16,'square',.06,-180),
+  yes  : ()=> { [523,659,784,1047].forEach((f,i)=> setTimeout(()=>tone(f,.28,'triangle',.11),i*90)); },
+  final: ()=> { [392,523,659,784,1047].forEach((f,i)=> setTimeout(()=>tone(f,.42,'sine',.10),i*110)); },
+};
+$('#snd').addEventListener('click',()=>{
+  sndOn=!sndOn; $('#snd').textContent = sndOn?'🔊':'🔇'; $('#snd').style.opacity = sndOn?.5:.28;
+  if(sndOn) sfx.tap();
+});
+function buzz(p){ if(navigator.vibrate) navigator.vibrate(p); }
+
+/* ==========================================================================
+   NAV
+   ========================================================================== */
+const STEPS = ['s-when','s-food','s-sweet','s-after'];
+function show(id){
+  $$('.scr').forEach(s=> s.classList.remove('on'));
+  $(id).classList.add('on');
+  $(id).scrollTop = 0;
+  const i = STEPS.indexOf(id.slice(1));
+  const prog = $('#prog');
+  if(i>=0){ prog.classList.add('on'); $$('#prog i').forEach((d,n)=> d.classList.toggle('act', n<=i)); }
+  else prog.classList.remove('on');
+}
+function toast(t){
+  const el=$('#toast'); el.textContent=t; el.classList.add('on');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),1600);
+}
+
+/* ==========================================================================
+   0 → 1
+   ========================================================================== */
+$('#openBtn').addEventListener('click',()=>{
+  ac(); sfx.pick(); buzz(12); show('#s-ask');
+});
+
+/* ==========================================================================
+   RUNAWAY "NO"
+   ========================================================================== */
+const noBtn = $('#noBtn'), yesBtn = $('#yesBtn'), taunt = $('#taunt');
+let tries = 0, pinned = false;
+const MAX = 8;
+
+function flee(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  if(noBtn.classList.contains('gone')) return;
+
+  if(!pinned){
+    const r = noBtn.getBoundingClientRect();
+    noBtn.style.width = r.width + 'px';
+    noBtn.style.left  = r.left + 'px';
+    noBtn.style.top   = r.top  + 'px';
+    noBtn.classList.add('fixed');
+    pinned = true;
+  }
+
+  const pad = 12;
+  const w = noBtn.offsetWidth, h = noBtn.offsetHeight;
+  const maxX = Math.max(pad, window.innerWidth  - w - pad);
+  const maxY = Math.max(pad, window.innerHeight - h - pad);
+  const yr = yesBtn.getBoundingClientRect();
+  const ycx = yr.left + yr.width/2, ycy = yr.top + yr.height/2;
+
+  let x=pad, y=pad;
+  for(let i=0;i<40;i++){
+    x = pad + Math.random()*(maxX-pad);
+    y = pad + Math.random()*(maxY-pad);
+    const dx = (x+w/2)-ycx, dy = (y+h/2)-ycy;
+    if(Math.hypot(dx,dy) > Math.min(190, window.innerWidth*0.5)) break;
+  }
+  noBtn.style.left = x+'px';
+  noBtn.style.top  = y+'px';
+  noBtn.style.transform = 'rotate(' + (Math.random()*22-11).toFixed(1) + 'deg)';
+
+  noBtn.textContent = CFG.no_labels[Math.min(tries, CFG.no_labels.length-1)];
+  taunt.textContent = CFG.taunts[tries % CFG.taunts.length];
+  taunt.classList.add('on');
+
+  const grow = Math.min(1 + (tries+1)*0.055, 1.42);
+  yesBtn.style.transform = 'scale(' + grow + ')';
+
+  sfx.flee(); buzz(8);
+  tries++;
+
+  if(tries >= MAX){
+    noBtn.classList.add('gone');
+    setTimeout(()=>{
+      noBtn.style.display='none';
+      taunt.textContent = 'кнопка «нет» ушла за попкорном и не вернулась 🍿';
+      toast('остался один вариант');
+    }, 520);
+  }
+}
+['pointerdown','mousedown','touchstart','click'].forEach(ev=>
+  noBtn.addEventListener(ev, flee, {passive:false}));
+noBtn.addEventListener('mouseenter', ()=>{ if(matchMedia('(hover:hover)').matches) flee(); });
+window.addEventListener('resize', ()=>{
+  if(!pinned || noBtn.classList.contains('gone')) return;
+  const w=noBtn.offsetWidth, h=noBtn.offsetHeight;
+  noBtn.style.left = Math.min(parseFloat(noBtn.style.left), window.innerWidth  - w - 12) + 'px';
+  noBtn.style.top  = Math.min(parseFloat(noBtn.style.top),  window.innerHeight - h - 12) + 'px';
+});
+
+/* ---------- YES ---------- */
+yesBtn.addEventListener('click',()=>{
+  sfx.yes(); buzz([16,60,16,60,30]); popcorn(34);
+  noBtn.style.display='none';
+  setTimeout(()=> show('#s-when'), 520);
+});
+
+/* ---------- popcorn rain ---------- */
+function popcorn(n){
+  const host = $('#pop');
+  for(let i=0;i<n;i++){
+    const s = document.createElement('span');
+    s.className='kernel';
+    s.textContent = Math.random()<.22 ? '❤️' : '🍿';
+    s.style.left = (Math.random()*100)+'vw';
+    s.style.fontSize = (15+Math.random()*16)+'px';
+    s.style.setProperty('--r', (Math.random()*720-360)+'deg');
+    s.style.animationDuration = (1.5+Math.random()*1.6)+'s';
+    s.style.animationDelay = (Math.random()*.5)+'s';
+    host.appendChild(s);
+    setTimeout(()=> s.remove(), 3600);
+  }
+}
+
+/* ==========================================================================
+   CARD BUILDERS
+   ========================================================================== */
+function card(o, grid){
+  const b = document.createElement('button');
+  b.className = 'card';
+  b.innerHTML = '<span class="em">'+o.em+'</span>' +
+                '<span><span class="nm">'+o.nm+'</span><span class="ds">'+o.ds+'</span></span>' +
+                '<span class="tick">✓</span>';
+  return b;
+}
+function fill(host, list, onPick, grid){
+  const el = $(host);
+  list.forEach(o=>{
+    const b = card(o, grid);
+    b.addEventListener('click', ()=> onPick(o, b));
+    el.appendChild(b);
+  });
+}
+
+/* ---------- 1. WHEN ---------- */
+fill('#whenCards', CFG.when_opts, ()=>{
+  sfx.pick(); buzz(12); show('#s-food');
+});
+
+/* ---------- 2. FOOD (несколько) ---------- */
+fill('#foodCards', CFG.food, (o,b)=>{
+  b.classList.toggle('sel');
+  const i = state.food.indexOf(o.nm);
+  if(i>=0) state.food.splice(i,1); else state.food.push(o.nm);
+  sfx.tap(); buzz(8);
+  const n = $('#foodNext');
+  const ok = state.food.length>0;
+  n.disabled = !ok; n.style.opacity = ok? 1 : .35;
+});
+$('#foodNext').addEventListener('click',()=>{
+  if(state.food.length===0){ toast('ну выбери хоть что-нибудь 🙂'); return; }
+  sfx.pick(); buzz(12); show('#s-sweet');
+});
+
+/* ---------- 3. SWEET ---------- */
+fill('#sweetCards', CFG.sweet, (o)=>{
+  state.sweet = o.nm; sfx.pick(); buzz(12); show('#s-after');
+}, true);
+
+/* ---------- 4. AFTER ---------- */
+fill('#afterCards', CFG.after, (o)=>{
+  state.after = o.nm; sfx.pick(); buzz([14,50,14]); finish();
+});
+
+/* ==========================================================================
+   FINAL
+   ========================================================================== */
+function planText(){
+  return 'Аброр, я согласна 🎬\n' +
+         'Фильм: ' + CFG.movie + '\n' +
+         'Когда: ' + CFG.when + '\n' +
+         'Едим: ' + state.food.join(' / ') + '\n' +
+         'Пьём: ' + (state.sweet || '—') + '\n' +
+         'Потом: ' + (state.after || '—') + '\n' +
+         '\n(отправлено с сайта, который не принимал «нет»)';
+}
+function tgLink(){
+  return 'https://t.me/' + CFG.telegram + '?text=' + encodeURIComponent(planText());
+}
+function finish(){
+  $('#tFood').textContent  = state.food.join(' · ');
+  $('#tSweet').textContent = state.sweet || '—';
+  $('#tAfter').textContent = state.after || '—';
+  $('#sendBtn').href = tgLink();
+  show('#s-final');
+  sfx.final(); popcorn(26);
+  $$('#ticket .trow').forEach((r,i)=>{
+    r.classList.remove('in');
+    setTimeout(()=> r.classList.add('in'), 220 + i*110);
+  });
+}
+$('#sendBtn').addEventListener('click',()=>{ sfx.pick(); buzz([14,50,14]); });
+$('#copyBtn').addEventListener('click', async ()=>{
+  const t = planText();
+  try{
+    await navigator.clipboard.writeText(t);
+    toast('скопировано ✓');
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast('скопировано ✓'); }
+    catch(_){ toast('не вышло — сделай скриншот 🙂'); }
+    ta.remove();
+  }
+  sfx.tap();
+});
+$('#againBtn').addEventListener('click',()=>{
+  state.food=[]; state.sweet=null; state.after=null;
+  $$('#foodCards .card').forEach(c=> c.classList.remove('sel'));
+  $('#foodNext').disabled=true; $('#foodNext').style.opacity=.35;
+  sfx.tap(); show('#s-when');
+});
+</script>
+</body>
+</html>
